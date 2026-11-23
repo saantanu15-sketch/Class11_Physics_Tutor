@@ -55,11 +55,23 @@ End-to-end **Retrieval-Augmented Generation (RAG) and automated document ingesti
 
 ## 📁 Project Structure
 
-*   `Parse_Document.ipynb`: Parses raw PDFs from Unity Catalog Volumes and writes to Delta Lake.
-*   `sync_ncert_index.ipynb`: Runs incremental Delta Syncs for Vector Search.
-*   `driver.ipynb`: Configures the `VectorSearchRetrieverTool`, system prompts, and deployment endpoints.
-*   `Jobs/NCERT_Physics_Auto_Ingest`: Event-driven workflow triggered by file arrivals.
-*   `App/ncert-physics-tutor`: React/Next.js web chat interface hosted on Databricks Apps.
+```text
+NCERT_Physics_RAG/
+├── Parse_Document.ipynb           # PDF parsing (ai_parse_document) & chunking
+├── sync_ncert_index.ipynb         # Incremental Vector Search index sync
+├── driver.ipynb (agent.py)        # ResponsesAgent, Unicode cleaner & deploy
+├── Jobs/
+│   └── NCERT_Physics_Auto_Ingest  # File arrival trigger (Parse -> Sync)
+├── App/
+│   └── ncert-physics-tutor        # Databricks App web chat UI
+└── Unity Catalog Assets/
+    ├── Volume: /Volumes/physics_rag/ncert/raw_pdfs/
+    ├── Table:  physics_rag.ncert.ncert_chunks
+    ├── Index:  physics_rag.ncert.ncert_physics_index
+    ├── Model:  physics_rag.ncert.ncert_physics_agent
+    └── Endpoint: agents_physics_rag-ncert-ncert_physics_agent
+```
+
 
 ## 🚀 Deployment & License
 
