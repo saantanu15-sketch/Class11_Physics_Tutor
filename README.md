@@ -79,9 +79,9 @@ The pipeline uses Unity Catalog and serverless endpoints with scale-to-zero enab
 
 ## 🙋 Author & Acknowledgments
 
-**Saantanu**  
-📧 saantanu15@gmail.com | luckyboyshantanu@gmail.com  
-🔗 [GitHub](https://github.com/saantanu15-sketch)
+📧 saantanu15@gmail.com, luckyboyshantanu@gmail.com
+🔗 [LinkedIn](https://www.linkedin.com/in/santanu-kumar-8a4071b4)  
+💼 [Portfolio](https://your-portfolio-url.com)  
 
 Built using Databricks and NCERT resources.
 
