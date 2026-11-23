@@ -17,41 +17,28 @@ End-to-end **Retrieval-Augmented Generation (RAG) and automated document ingesti
 
 ## 🏗 Architecture
 
-## 🏗 Architecture
+```text
+┌────────────────────────────────────────────────────────┐
+│ 1. DATA & VECTOR PIPELINE (Event-Driven)               │
+├────────────────────────────────────────────────────────┤
+│ UC Volume PDFs → ai_parse_document → Delta Sync Index  │
+│ (File Arrival)   (1,500-char chunks) (Managed Embed)   │
+└────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 1. AUTOMATED DATA & VECTORIZATION PIPELINE (Event-Driven)                   │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ Unity Catalog Volume       Document Parsing & Chunking     Vector Search    │
-│ ────────────────────       ───────────────────────────     ─────────────    │
-│ /Volumes/physics_rag/   →  ai_parse_document (v2.0)     →  Delta Sync Index │
-│   ncert/raw_pdfs/          • Layout & figure extraction    • Change Data    │
-│ • File Arrival Trigger     • 1,500-char overlap chunks       Feed enabled   │
-│   (Auto-Ingest Job)        • Theory / Example / Exercise   • Managed GTE/   │
-│                            • xxhash64 chunk_id               BGE embeddings │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│ 2. AGENT & SERVING PIPELINE (Mosaic AI + MLflow)       │
+├────────────────────────────────────────────────────────┤
+│ Top-6 Retriever → Qwen 3.5 (122B)   → Model Serving    │
+│ (Vector Search)   (5-Step + Unicode)  (Scale-to-zero)  │
+└────────────────────────────────────────────────────────┘
 
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 2. AGENT ENGINEERING & SERVING PIPELINE (Mosaic AI + MLflow)                │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ Vector Retrieval Tool      LLM Reasoning & Prompting       Model Serving    │
-│ ─────────────────────      ─────────────────────────       ─────────────    │
-│ VectorSearchRetriever   →  databricks-qwen35-122b-a10b  →  Unity Catalog    │
-│ • Top-6 semantic chunks    • 5-Step Tutor Prompt             Model Registry │
-│ • ncert_physics_index        (Given → Formula → Steps      • REST Endpoint  │
-│                               → Answer → NCERT Ref)        • Scale-to-zero  │
-│                            • clean_latex_to_unicode()                       │
-└─────────────────────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────────────────────┐
-│ 3. FRONTEND & INTERACTION LAYER (Databricks Apps)                           │
-├─────────────────────────────────────────────────────────────────────────────┤
-│ Student Query              Databricks App Web UI           Formatted Output │
-│ ─────────────              ─────────────────────           ──────────────── │
-│ Physics conceptual /    →  ncert-physics-tutor          →  Clean Unicode    │
-│ numerical question         (e2e-chatbot-app-next)          equations &      │
-│                            • Linked to Serving Endpoint    NCERT citations  │
-└─────────────────────────────────────────────────────────────────────────────┘
+┌────────────────────────────────────────────────────────┐
+│ 3. FRONTEND LAYER (Databricks Apps)                    │
+├────────────────────────────────────────────────────────┤
+│ Student Query   → ncert-physics-tutor → Clean Unicode  │
+│ (Physics Q&A)     (Web Chat UI)         & NCERT Ref    │
+└────────────────────────────────────────────────────────┘
+```
 
 
 ## 🛠 Technologies
