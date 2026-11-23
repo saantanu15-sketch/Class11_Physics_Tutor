@@ -17,7 +17,42 @@ End-to-end **Retrieval-Augmented Generation (RAG) and automated document ingesti
 
 ## 🏗 Architecture
 
-For a detailed breakdown of the automated ingestion, agent engineering, and frontend interaction pipelines, refer to the project code components.
+## 🏗 Architecture
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 1. AUTOMATED DATA & VECTORIZATION PIPELINE (Event-Driven)                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Unity Catalog Volume       Document Parsing & Chunking     Vector Search    │
+│ ────────────────────       ───────────────────────────     ─────────────    │
+│ /Volumes/physics_rag/   →  ai_parse_document (v2.0)     →  Delta Sync Index │
+│   ncert/raw_pdfs/          • Layout & figure extraction    • Change Data    │
+│ • File Arrival Trigger     • 1,500-char overlap chunks       Feed enabled   │
+│   (Auto-Ingest Job)        • Theory / Example / Exercise   • Managed GTE/   │
+│                            • xxhash64 chunk_id               BGE embeddings │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 2. AGENT ENGINEERING & SERVING PIPELINE (Mosaic AI + MLflow)                │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Vector Retrieval Tool      LLM Reasoning & Prompting       Model Serving    │
+│ ─────────────────────      ─────────────────────────       ─────────────    │
+│ VectorSearchRetriever   →  databricks-qwen35-122b-a10b  →  Unity Catalog    │
+│ • Top-6 semantic chunks    • 5-Step Tutor Prompt             Model Registry │
+│ • ncert_physics_index        (Given → Formula → Steps      • REST Endpoint  │
+│                               → Answer → NCERT Ref)        • Scale-to-zero  │
+│                            • clean_latex_to_unicode()                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 3. FRONTEND & INTERACTION LAYER (Databricks Apps)                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│ Student Query              Databricks App Web UI           Formatted Output │
+│ ─────────────              ─────────────────────           ──────────────── │
+│ Physics conceptual /    →  ncert-physics-tutor          →  Clean Unicode    │
+│ numerical question         (e2e-chatbot-app-next)          equations &      │
+│                            • Linked to Serving Endpoint    NCERT citations  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
 
 ## 🛠 Technologies
 
