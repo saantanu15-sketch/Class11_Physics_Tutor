@@ -85,4 +85,9 @@ The pipeline uses Unity Catalog and serverless endpoints with scale-to-zero enab
 
 Built using Databricks and NCERT resources.
 
+## License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+
 **⭐ Star this repo if you found it helpful!**
